@@ -86,14 +86,22 @@ const SigninScreen = ({navigation}) => {
             <ToggleButton size={0.5} />
             <Text style={styles.rememberMeText}>Remember me</Text>
           </View>
-          <Text style={styles.forgotPasswordText}>Forgot Password</Text>
+          <Text
+            style={styles.forgotPasswordText}
+            onPress={() => navigation.navigate('ForgotPassword')}>
+            Forgot Password
+          </Text>
         </View>
         <TouchableOpacity style={styles.signinButton}>
           <Text style={styles.signinButtonText}>Sign In</Text>
         </TouchableOpacity>
         <View style={styles.signupContainer}>
           <Text style={styles.accountText}>Don't have an account</Text>
-          <Text style={styles.signupText}>Sign Up</Text>
+          <Text
+            style={styles.signupText}
+            onPress={() => navigation.navigate('Signup')}>
+            Sign Up
+          </Text>
         </View>
         <Text style={styles.orText}>OR</Text>
         <TouchableOpacity style={styles.facebookButton}>
