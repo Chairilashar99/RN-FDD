@@ -8,14 +8,15 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-import React from 'react';
-import {Separator} from '../components';
+import React, {useState} from 'react';
+import {Separator, ToggleButton} from '../components';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import {Colors, Fonts, Images} from '../constants';
 import {Display} from '../utils';
 
 const SigninScreen = ({navigation}) => {
+  const [isPasswordShow, setIsPasswordShow] = useState(false);
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -64,23 +65,25 @@ const SigninScreen = ({navigation}) => {
               style={{marginRight: 10}}
             />
             <TextInput
-              secureTextEntry={true}
+              secureTextEntry={isPasswordShow ? false : true}
               placeholder="Password"
               placeholderTextColor={Colors.DEFAULT_GREY}
               selectionColor={Colors.DEFAULT_GREY}
               style={styles.inputText}
             />
             <Feather
-              name="eye"
+              name={isPasswordShow ? 'eye' : 'eye-off'}
               size={22}
               color={Colors.DEFAULT_GREY}
               style={{marginRight: 10}}
+              onPress={() => setIsPasswordShow(!isPasswordShow)}
             />
           </View>
         </View>
         <Text></Text>
         <View style={styles.forgotPasswordContainer}>
-          <View>
+          <View style={styles.toggleContainer}>
+            <ToggleButton size={0.5} />
             <Text style={styles.rememberMeText}>Remember me</Text>
           </View>
           <Text style={styles.forgotPasswordText}>Forgot Password</Text>
@@ -279,5 +282,9 @@ const styles = StyleSheet.create({
     lineHeight: 13 * 1.4,
     color: Colors.DEFAULT_WHITE,
     fontFamily: Fonts.POPPINS_MEDIUM,
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
