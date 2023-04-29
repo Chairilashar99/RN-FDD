@@ -24,8 +24,26 @@ const RegisterPhoneScreen = ({navigation}) => {
   );
   const [inputContainerY, setInputContainerY] = useState(0);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [dropdownLayout, setDropdownLayout] = useState({});
+
+  const closeDropdown = (pageX, pageY) => {
+    if (isDropdownOpen) {
+      if (
+        pageX < dropdownLayout?.x ||
+        pageX > dropdownLayout?.x + dropdownLayout?.width ||
+        pageY < dropdownLayout?.y ||
+        pageY > dropdownLayout?.y + dropdownLayout?.height
+      ) {
+        setIsDropdownOpen(false);
+      }
+    }
+  };
   return (
-    <View style={styles.container}>
+    <View
+      style={styles.container}
+      onStartShouldSetResponder={({nativeEvent: {pageX, pageY}}) =>
+        closeDropdown(pageX, pageY)
+      }>
       <StatusBar
         barStyle="dark-content"
         backgroundColor={Colors.DEFAULT_WHITE}
@@ -70,12 +88,22 @@ const RegisterPhoneScreen = ({navigation}) => {
             placeholderTextColor={Colors.DEFAULT_GREY}
             selectionColor={Colors.DEFAULT_GREY}
             keyboardType="number-pad"
+            onFocus={() => setIsDropdownOpen(false)}
             style={styles.inputText}
           />
         </View>
       </View>
+      <TouchableOpacity style={styles.signinButton} activeOpacity={0.8}>
+        <Text style={styles.signinButtonText}>Contiue</Text>
+      </TouchableOpacity>
       {isDropdownOpen && (
-        <View style={getDropdownStyle(inputContainerY)}>
+        <View
+          style={getDropdownStyle(inputContainerY)}
+          onLayout={({
+            nativeEvent: {
+              layout: {x, y, height, width},
+            },
+          }) => setDropdownLayout({x, y, height, width})}>
           <FlatList
             data={CountryCode}
             keyExtractor={item => item.code}
@@ -188,5 +216,19 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: Colors.LIGHT_GREY2,
     zIndex: 3,
+  },
+  signinButton: {
+    backgroundColor: Colors.DEFAULT_GREEN,
+    borderRadius: 8,
+    marginHorizontal: 20,
+    height: Display.setHeight(6),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  signinButtonText: {
+    fontSize: 18,
+    lineHeight: 18 * 1.4,
+    color: Colors.DEFAULT_WHITE,
+    fontFamily: Fonts.POPPINS_MEDIUM,
   },
 });
