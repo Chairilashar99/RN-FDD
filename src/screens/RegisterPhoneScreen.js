@@ -93,7 +93,10 @@ const RegisterPhoneScreen = ({navigation}) => {
           />
         </View>
       </View>
-      <TouchableOpacity style={styles.signinButton} activeOpacity={0.8}>
+      <TouchableOpacity
+        style={styles.signinButton}
+        activeOpacity={0.8}
+        onPress={navigation.navigate('Verification')}>
         <Text style={styles.signinButtonText}>Contiue</Text>
       </TouchableOpacity>
       {isDropdownOpen && (
