@@ -12,9 +12,54 @@ import {Colors, Fonts, Images} from '../constants';
 import {Separator} from '../components';
 import {Display} from '../utils';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import {AuthenticationService} from '../services';
 import {Flow} from 'react-native-animated-spinkit';
+
+const inputStyle = state => {
+  switch (state) {
+    case 'valid':
+      return {
+        ...styles.inputContainer,
+        borderWidth: 1,
+        borderColor: Colors.SECONDARY_GREEN,
+      };
+    case 'invalid':
+      return {
+        ...styles.inputContainer,
+        borderWidth: 1,
+        borderColor: Colors.DEFAULT_RED,
+      };
+    default:
+      return styles.inputContainer;
+  }
+};
+
+const showMarker = state => {
+  switch (state) {
+    case 'valid':
+      return (
+        <AntDesign
+          name="checkcircleo"
+          color={Colors.SECONDARY_GREEN}
+          size={18}
+          style={{marginRight: 5}}
+        />
+      );
+    case 'invalid':
+      return (
+        <AntDesign
+          name="closecircleo"
+          color={Colors.DEFAULT_RED}
+          size={18}
+          style={{marginRight: 5}}
+        />
+      );
+    default:
+      return null;
+  }
+};
 
 const SignupScreen = ({navigation}) => {
   const [isPasswordShow, setIsPasswordShow] = useState(false);
@@ -23,6 +68,10 @@ const SignupScreen = ({navigation}) => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [usernameErrorMessage, setUsernameErrorMessage] = useState('');
+  const [emailErrorMessage, setEmailErrorMessage] = useState('');
+  const [usernameState, setUsernameState] = useState('default');
+  const [emailState, setEmailState] = useState('default');
 
   const register = () => {
     let user = {
@@ -35,12 +84,38 @@ const SignupScreen = ({navigation}) => {
     AuthenticationService.register(user).then(response => {
       setIsLoading(false);
       console.log(response);
-      if (!response?.data) {
+      if (!response?.status) {
         setErrorMessage(response?.message);
       }
     });
     // navigation.navigate('RegisterPhone');
   };
+
+  const checkUserExist = async (type, value) => {
+    if (value?.length > 0) {
+      AuthenticationService.checkUserExist(type, value).then(response => {
+        if (response?.status) {
+          type === 'email' && emailErrorMessage
+            ? setEmailErrorMessage('')
+            : null;
+
+          type === 'username' && usernameErrorMessage
+            ? setUsernameErrorMessage('')
+            : null;
+          type === 'email' ? setEmailState('valid') : null;
+          type === 'username' ? setUsernameState('valid') : null;
+        } else {
+          type === 'email' ? setEmailErrorMessage(response?.message) : null;
+          type === 'username'
+            ? setUsernameErrorMessage(response?.message)
+            : null;
+          type === 'email' ? setEmailState('invalid') : null;
+          type === 'username' ? setUsernameState('invalid') : null;
+        }
+      });
+    }
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar
@@ -62,7 +137,7 @@ const SignupScreen = ({navigation}) => {
       <Text style={styles.content}>
         Enter your email, choose a username and password
       </Text>
-      <View style={styles.inputContainer}>
+      <View style={inputStyle(usernameState)}>
         <View style={styles.inputSubContainer}>
           <Feather
             name="user"
@@ -76,11 +151,15 @@ const SignupScreen = ({navigation}) => {
             selectionColor={Colors.DEFAULT_GREY}
             style={styles.inputText}
             onChangeText={text => setUsername(text)}
+            onEndEditing={({nativeEvent: {text}}) =>
+              checkUserExist('username', text)
+            }
           />
+          {showMarker(usernameState)}
         </View>
       </View>
-      <Separator height={15} />
-      <View style={styles.inputContainer}>
+      <Text style={styles.errorMessages}>{usernameErrorMessage}</Text>
+      <View style={inputStyle(emailState)}>
         <View style={styles.inputSubContainer}>
           <Feather
             name="mail"
@@ -94,10 +173,14 @@ const SignupScreen = ({navigation}) => {
             selectionColor={Colors.DEFAULT_GREY}
             style={styles.inputText}
             onChangeText={text => setEmail(text)}
+            onEndEditing={({nativeEvent: {text}}) =>
+              checkUserExist('email', text)
+            }
           />
+          {showMarker(emailState)}
         </View>
       </View>
-      <Separator height={15} />
+      <Text style={styles.errorMessages}>{emailErrorMessage}</Text>
       <View style={styles.inputContainer}>
         <View style={styles.inputSubContainer}>
           <Feather

@@ -14,9 +14,31 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import {Colors, Fonts, Images} from '../constants';
 import {Display} from '../utils';
+import {AuthenticationService} from '../services';
+import {Flow} from 'react-native-animated-spinkit';
 
 const SigninScreen = ({navigation}) => {
   const [isPasswordShow, setIsPasswordShow] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const signIn = () => {
+    setIsLoading(true);
+    let user = {
+      username,
+      password,
+    };
+    AuthenticationService.login(user).then(response => {
+      setIsLoading(false);
+      console.log(response);
+      if (!response?.status) {
+        setErrorMessage(response?.message);
+      }
+    });
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -52,6 +74,7 @@ const SigninScreen = ({navigation}) => {
               placeholderTextColor={Colors.DEFAULT_GREY}
               selectionColor={Colors.DEFAULT_GREY}
               style={styles.inputText}
+              onChangeText={text => setUsername(text)}
             />
           </View>
         </View>
@@ -70,6 +93,7 @@ const SigninScreen = ({navigation}) => {
               placeholderTextColor={Colors.DEFAULT_GREY}
               selectionColor={Colors.DEFAULT_GREY}
               style={styles.inputText}
+              onChangeText={text => setPassword(text)}
             />
             <Feather
               name={isPasswordShow ? 'eye' : 'eye-off'}
@@ -80,7 +104,7 @@ const SigninScreen = ({navigation}) => {
             />
           </View>
         </View>
-        <Text></Text>
+        <Text style={styles.errorMessages}>{errorMessage}</Text>
         <View style={styles.forgotPasswordContainer}>
           <View style={styles.toggleContainer}>
             <ToggleButton size={0.5} />
@@ -92,8 +116,15 @@ const SigninScreen = ({navigation}) => {
             Forgot Password
           </Text>
         </View>
-        <TouchableOpacity style={styles.signinButton}>
-          <Text style={styles.signinButtonText}>Sign In</Text>
+        <TouchableOpacity
+          style={styles.signinButton}
+          onPress={() => signIn()}
+          activeOpacity={0.8}>
+          {isLoading ? (
+            <Flow size={48} color="#FFF" />
+          ) : (
+            <Text style={styles.signinButtonText}>Sign In</Text>
+          )}
         </TouchableOpacity>
         <View style={styles.signupContainer}>
           <Text style={styles.accountText}>Don't have an account</Text>
@@ -294,5 +325,14 @@ const styles = StyleSheet.create({
   toggleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  errorMessages: {
+    fontSize: 10,
+    lineHeight: 10 * 1.4,
+    color: Colors.DEFAULT_RED,
+    fontFamily: Fonts.POPPINS_MEDIUM,
+    marginHorizontal: 20,
+    marginTop: 3,
+    marginBottom: 10,
   },
 });
