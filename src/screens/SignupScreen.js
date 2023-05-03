@@ -13,9 +13,34 @@ import {Separator} from '../components';
 import {Display} from '../utils';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
+import {AuthenticationService} from '../services';
+import {Flow} from 'react-native-animated-spinkit';
 
 const SignupScreen = ({navigation}) => {
   const [isPasswordShow, setIsPasswordShow] = useState(false);
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const register = () => {
+    let user = {
+      username,
+      email,
+      password,
+    };
+    console.log(user);
+    setIsLoading(true);
+    AuthenticationService.register(user).then(response => {
+      setIsLoading(false);
+      console.log(response);
+      if (!response?.data) {
+        setErrorMessage(response?.message);
+      }
+    });
+    // navigation.navigate('RegisterPhone');
+  };
   return (
     <View style={styles.container}>
       <StatusBar
@@ -31,13 +56,29 @@ const SignupScreen = ({navigation}) => {
           color={Colors.DEFAULT_BLACK}
           onPress={() => navigation.goBack()}
         />
-        <Text style={styles.headerTitle}>Create Account</Text>
+        <Text style={styles.headerTitle}>Sign Up</Text>
       </View>
-      <Text style={styles.title}>Welcome</Text>
+      <Text style={styles.title}>Create Account</Text>
       <Text style={styles.content}>
         Enter your email, choose a username and password
       </Text>
-
+      <View style={styles.inputContainer}>
+        <View style={styles.inputSubContainer}>
+          <Feather
+            name="user"
+            size={22}
+            color={Colors.DEFAULT_GREY}
+            style={{marginRight: 10}}
+          />
+          <TextInput
+            placeholder="Username"
+            placeholderTextColor={Colors.DEFAULT_GREY}
+            selectionColor={Colors.DEFAULT_GREY}
+            style={styles.inputText}
+            onChangeText={text => setUsername(text)}
+          />
+        </View>
+      </View>
       <Separator height={15} />
       <View style={styles.inputContainer}>
         <View style={styles.inputSubContainer}>
@@ -52,6 +93,7 @@ const SignupScreen = ({navigation}) => {
             placeholderTextColor={Colors.DEFAULT_GREY}
             selectionColor={Colors.DEFAULT_GREY}
             style={styles.inputText}
+            onChangeText={text => setEmail(text)}
           />
         </View>
       </View>
@@ -70,6 +112,7 @@ const SignupScreen = ({navigation}) => {
             placeholderTextColor={Colors.DEFAULT_GREY}
             selectionColor={Colors.DEFAULT_GREY}
             style={styles.inputText}
+            onChangeText={text => setPassword(text)}
           />
           <Feather
             name={isPasswordShow ? 'eye' : 'eye-off'}
@@ -80,10 +123,13 @@ const SignupScreen = ({navigation}) => {
           />
         </View>
       </View>
-      <TouchableOpacity
-        style={styles.signinButton}
-        onPress={() => navigation.navigate('RegisterPhone')}>
-        <Text style={styles.signinButtonText}>Create Account</Text>
+      <Text style={styles.errorMessages}>{errorMessage}</Text>
+      <TouchableOpacity style={styles.signinButton} onPress={() => register()}>
+        {isLoading ? (
+          <Flow size={48} color="#FFF" />
+        ) : (
+          <Text style={styles.signinButtonText}>Create Account</Text>
+        )}
       </TouchableOpacity>
       <Text style={styles.orText}>OR</Text>
       <TouchableOpacity style={styles.facebookButton}>
@@ -230,5 +276,13 @@ const styles = StyleSheet.create({
   signinButtonLogo: {
     height: 18,
     width: 18,
+  },
+  errorMessages: {
+    fontSize: 10,
+    lineHeight: 10 * 1.4,
+    color: Colors.DEFAULT_RED,
+    fontFamily: Fonts.POPPINS_MEDIUM,
+    marginHorizontal: 20,
+    marginTop: 5,
   },
 });
