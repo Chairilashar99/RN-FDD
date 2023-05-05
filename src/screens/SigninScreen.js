@@ -16,6 +16,7 @@ import {Colors, Fonts, Images} from '../constants';
 import {Display} from '../utils';
 import {AuthenticationService} from '../services';
 import {Flow} from 'react-native-animated-spinkit';
+import {connect} from 'react-redux';
 
 const SigninScreen = ({navigation}) => {
   const [isPasswordShow, setIsPasswordShow] = useState(false);
@@ -160,7 +161,7 @@ const SigninScreen = ({navigation}) => {
   );
 };
 
-export default SigninScreen;
+export default connect()(SigninScreen);
 
 const styles = StyleSheet.create({
   container: {
