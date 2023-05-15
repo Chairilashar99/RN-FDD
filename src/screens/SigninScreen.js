@@ -17,8 +17,9 @@ import {Display} from '../utils';
 import {AuthenticationService} from '../services';
 import {Flow} from 'react-native-animated-spinkit';
 import {connect} from 'react-redux';
+import {GeneralAction} from '../actions';
 
-const SigninScreen = ({navigation}) => {
+const SigninScreen = ({navigation, setToken}) => {
   const [isPasswordShow, setIsPasswordShow] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -33,6 +34,7 @@ const SigninScreen = ({navigation}) => {
     };
     AuthenticationService.login(user).then(response => {
       setIsLoading(false);
+      setToken(response?.data);
       console.log(response);
       if (!response?.status) {
         setErrorMessage(response?.message);
@@ -161,7 +163,13 @@ const SigninScreen = ({navigation}) => {
   );
 };
 
-export default connect()(SigninScreen);
+const mapDispatchToProps = dispatch => {
+  return {
+    setToken: token => dispatch(GeneralAction.setToken(token)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(SigninScreen);
 
 const styles = StyleSheet.create({
   container: {

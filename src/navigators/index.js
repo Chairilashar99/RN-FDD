@@ -16,6 +16,7 @@ import {connect} from 'react-redux';
 const Stack = createNativeStackNavigator();
 
 const Navigators = ({token}) => {
+  console.log(token);
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
