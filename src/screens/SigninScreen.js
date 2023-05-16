@@ -14,17 +14,19 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import {Colors, Fonts, Images} from '../constants';
 import {Display} from '../utils';
-import {AuthenticationService} from '../services';
+import {AuthenticationService, StorageService} from '../services';
 import {Flow} from 'react-native-animated-spinkit';
-import {connect} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {GeneralAction} from '../actions';
 
-const SigninScreen = ({navigation, setToken}) => {
+const SigninScreen = ({navigation}) => {
   const [isPasswordShow, setIsPasswordShow] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  const dispatch = useDispatch();
 
   const signIn = () => {
     setIsLoading(true);
@@ -34,9 +36,12 @@ const SigninScreen = ({navigation, setToken}) => {
     };
     AuthenticationService.login(user).then(response => {
       setIsLoading(false);
-      setToken(response?.data);
       console.log(response);
-      if (!response?.status) {
+      if (response?.status) {
+        StorageService.setToken(response?.data).then(() => {
+          dispatch(GeneralAction.setToken(response?.data));
+        });
+      } else {
         setErrorMessage(response?.message);
       }
     });
@@ -163,13 +168,7 @@ const SigninScreen = ({navigation, setToken}) => {
   );
 };
 
-const mapDispatchToProps = dispatch => {
-  return {
-    setToken: token => dispatch(GeneralAction.setToken(token)),
-  };
-};
-
-export default connect(null, mapDispatchToProps)(SigninScreen);
+export default SigninScreen;
 
 const styles = StyleSheet.create({
   container: {
