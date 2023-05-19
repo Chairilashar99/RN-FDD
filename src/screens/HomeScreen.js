@@ -60,6 +60,7 @@ const HomeScreen = () => {
         <View style={styles.categoriesContainer}>
           {Mock.CATEGORIES.map(({name, logo}) => (
             <CategoryMenuItems
+              key={name}
               name={name}
               logo={logo}
               activeCategory={activeCategory}

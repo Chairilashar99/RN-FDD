@@ -1,11 +1,10 @@
-import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, Image} from 'react-native';
 import React from 'react';
 import {Colors, Fonts, Images} from '../constants';
 
 const CategoryMenuItems = ({name, logo, activeCategory, setActiveCategory}) => {
   return (
     <TouchableOpacity
-      key={name}
       onPress={() => setActiveCategory(name)}
       style={styles.category()}>
       <Image
