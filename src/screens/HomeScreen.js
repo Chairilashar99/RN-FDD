@@ -1,12 +1,13 @@
 import {StatusBar, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
-import {Separator} from '../components';
-import {Colors, Fonts} from '../constants';
+import React, {useState} from 'react';
+import {CategoryMenuItems, Separator} from '../components';
+import {Colors, Fonts, Mock} from '../constants';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
 
 const HomeScreen = () => {
+  const [activeCategory, setActiveCategory] = useState();
   return (
     <View style={styles.container}>
       <StatusBar
@@ -39,6 +40,32 @@ const HomeScreen = () => {
           <View style={styles.alertBadge}>
             <Text style={styles.alertBadgeText}>12</Text>
           </View>
+        </View>
+        <View style={styles.searchContainer}>
+          <View style={styles.searchSection}>
+            <Ionicons
+              name="search-outline"
+              size={25}
+              color={Colors.DEFAULT_GREY}
+            />
+            <Text style={styles.searchText}>Search..</Text>
+          </View>
+          <Feather
+            name="sliders"
+            size={20}
+            color={Colors.DEFAULT_YELLOW}
+            style={{marginRight: 10}}
+          />
+        </View>
+        <View style={styles.categoriesContainer}>
+          {Mock.CATEGORIES.map(({name, logo}) => (
+            <CategoryMenuItems
+              name={name}
+              logo={logo}
+              activeCategory={activeCategory}
+              setActiveCategory={setActiveCategory}
+            />
+          ))}
         </View>
       </View>
     </View>
@@ -101,5 +128,32 @@ const styles = StyleSheet.create({
     fontSize: 10,
     lineHeight: 10 * 1.4,
     fontFamily: Fonts.POPPINS_BOLD,
+  },
+  searchContainer: {
+    backgroundColor: Colors.DEFAULT_WHITE,
+    height: 45,
+    borderRadius: 8,
+    marginHorizontal: 20,
+    marginTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  searchSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 10,
+  },
+  searchText: {
+    color: Colors.DEFAULT_GREY,
+    fontSize: 16,
+    lineHeight: 16 * 1.4,
+    fontFamily: Fonts.POPPINS_MEDIUM,
+    marginLeft: 10,
+  },
+  categoriesContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginTop: 20,
   },
 });
