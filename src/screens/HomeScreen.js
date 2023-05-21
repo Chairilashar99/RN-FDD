@@ -1,13 +1,35 @@
-import {StatusBar, StyleSheet, Text, View} from 'react-native';
-import React, {useState} from 'react';
-import {CategoryMenuItems, Separator} from '../components';
+import {
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  FlatList,
+} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {CategoryMenuItems, RestaurantCard, Separator} from '../components';
 import {Colors, Fonts, Mock} from '../constants';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
+import {RestaurantService} from '../services';
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
   const [activeCategory, setActiveCategory] = useState();
+  const [restaurants, setRestaurants] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      RestaurantService.getRestaurants().then(response => {
+        if (response?.status) {
+          console.log(response?.data);
+          setRestaurants(response?.data);
+        }
+      });
+    });
+    return unsubscribe;
+  }, []);
+
   return (
     <View style={styles.container}>
       <StatusBar
@@ -69,6 +91,20 @@ const HomeScreen = () => {
           ))}
         </View>
       </View>
+      <ScrollView style={styles.listContainer}>
+        <View style={styles.horizontalListContainer}>
+          <View style={styles.listHeader}>
+            <Text style={styles.listHeaderTitile}>Top Rated</Text>
+            <Text style={styles.listHeaderSubtitle}>See All</Text>
+          </View>
+          <FlatList
+            data={restaurants}
+            keyExtractor={item => item?.id}
+            horizontal
+            renderItem={({item}) => <RestaurantCard {...item} />}
+          />
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -156,5 +192,31 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     marginTop: 20,
+  },
+  listContainer: {
+    paddingVertical: 5,
+    zIndex: -5,
+  },
+  horizontalListContainer: {
+    marginTop: 30,
+  },
+  listHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginHorizontal: 20,
+    marginBottom: 5,
+  },
+  listHeaderTitile: {
+    color: Colors.DEFAULT_BLACK,
+    fontSize: 16,
+    lineHeight: 16 * 1.4,
+    fontFamily: Fonts.POPPINS_MEDIUM,
+  },
+  listHeaderSubtitle: {
+    color: Colors.DEFAULT_YELLOW,
+    fontSize: 13,
+    lineHeight: 13 * 1.4,
+    fontFamily: Fonts.POPPINS_MEDIUM,
   },
 });

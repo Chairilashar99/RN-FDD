@@ -29,6 +29,13 @@ const setIsFirstTimeUse = () => {
   };
 };
 
+const setUserData = userData => {
+  return {
+    type: types.SET_USER_DATA,
+    payload: userData,
+  };
+};
+
 const appStart = () => {
   return (dispatch, getState) => {
     StorageService.getFirstTimeUse().then(isFirstTimeUse => {
@@ -39,21 +46,25 @@ const appStart = () => {
     });
     StorageService.getToken().then(token => {
       if (token) {
+        console.log(token);
         dispatch({
           type: types.SET_TOKEN,
           payload: token,
         });
         UserService.getUserData().then(userResponse => {
+          console.log(userResponse);
           if (userResponse?.status) {
             dispatch({
               type: types.SET_USER_DATA,
               payload: userResponse?.data,
             });
+            dispatch(CartAction.getCartItems());
+            dispatch(BookmarkAction.getBookmarks());
             dispatch({
               type: types.SET_IS_APP_LOADING,
               payload: false,
             });
-          } else if (userResponse?.error?.message === 'TokenExpiredError') {
+          } else if (userResponse?.message === 'TokenExpiredError') {
             AuthenticationService.refreshToken().then(tokenResponse => {
               if (tokenResponse?.status) {
                 dispatch({
@@ -94,4 +105,11 @@ const appStart = () => {
   };
 };
 
-export default {setIsAppLoading, setToken, appStart, setIsFirstTimeUse, types};
+export default {
+  setIsAppLoading,
+  setToken,
+  appStart,
+  setIsFirstTimeUse,
+  setUserData,
+  types,
+};

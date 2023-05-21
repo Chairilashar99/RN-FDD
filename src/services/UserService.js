@@ -1,4 +1,4 @@
-import {ApiConstants} from '../constants';
+import ApiContants from '../constants/ApiContants';
 import axios from 'axios';
 import {authHeader} from '../utils/Generator';
 import {getToken} from '../Store';
@@ -7,11 +7,12 @@ const getUserData = async () => {
   console.log(`UserService | getUserData`);
   try {
     let userResponse = await axios.get(
-      `${ApiConstants.BACKEND_API.BASE_API_URL}${ApiConstants.BACKEND_API.USER}/get-user`,
+      `${ApiContants.BACKEND_API.BASE_API_URL}${ApiContants.BACKEND_API.USER}/get-user`,
       {
         headers: authHeader(getToken()),
       },
     );
+
     if (userResponse?.status === 200) {
       return {
         status: true,
@@ -20,14 +21,17 @@ const getUserData = async () => {
       };
     } else {
       return {
-        status: true,
+        status: false,
         message: `User data not found`,
       };
     }
   } catch (error) {
+    console.log(error?.response?.data);
     return {
-      status: true,
-      message: `User data not found`,
+      status: false,
+      message: error?.response?.data?.message
+        ? error?.response?.data?.message
+        : `User data not found`,
     };
   }
 };

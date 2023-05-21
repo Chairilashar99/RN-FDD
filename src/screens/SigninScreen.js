@@ -28,7 +28,7 @@ const SigninScreen = ({navigation}) => {
 
   const dispatch = useDispatch();
 
-  const signIn = () => {
+  const signIn = async () => {
     setIsLoading(true);
     let user = {
       username,
