@@ -22,7 +22,7 @@ const HomeScreen = ({navigation}) => {
     const unsubscribe = navigation.addListener('focus', () => {
       RestaurantService.getRestaurants().then(response => {
         if (response?.status) {
-          console.log(response?.data);
+          // console.log(response?.data);
           setRestaurants(response?.data);
         }
       });
@@ -101,6 +101,9 @@ const HomeScreen = ({navigation}) => {
             data={restaurants}
             keyExtractor={item => item?.id}
             horizontal
+            ListHeaderComponent={() => <Separator width={20} />}
+            ListFooterComponent={() => <Separator width={20} />}
+            ListSeparatorComponent={() => <Separator width={10} />}
             renderItem={({item}) => <RestaurantCard {...item} />}
           />
         </View>
