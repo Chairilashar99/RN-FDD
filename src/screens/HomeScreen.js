@@ -8,12 +8,18 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
-import {CategoryMenuItems, RestaurantCard, Separator} from '../components';
+import {
+  CategoryMenuItems,
+  RestaurantCard,
+  RestaurantMediumCard,
+  Separator,
+} from '../components';
 import {Colors, Fonts, Mock} from '../constants';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import {RestaurantService} from '../services';
+import {Display} from '../utils';
 
 const sortStyle = isActive =>
   isActive
@@ -98,13 +104,16 @@ const HomeScreen = ({navigation}) => {
           ))}
         </View>
       </View>
-      <ScrollView style={styles.listContainer}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={styles.listContainer}>
         <View style={styles.horizontalListContainer}>
           <View style={styles.listHeader}>
             <Text style={styles.listHeaderTitile}>Top Rated</Text>
             <Text style={styles.listHeaderSubtitle}>See All</Text>
           </View>
           <FlatList
+            showsHorizontalScrollIndicator={false}
             data={restaurants}
             keyExtractor={item => item?.id}
             horizontal
@@ -146,6 +155,10 @@ const HomeScreen = ({navigation}) => {
             <Text style={styles.sortListItemText}>Trending</Text>
           </TouchableOpacity>
         </View>
+        {restaurants?.map(item => (
+          <RestaurantMediumCard {...item} key={item?.id} />
+        ))}
+        <Separator height={Display.setHeight(5)} />
       </ScrollView>
     </View>
   );

@@ -4,6 +4,7 @@ import ToggleButton from './ToggleButton';
 import FlagItem from './FlagItem';
 import CategoryMenuItems from './CategoryMenuItems';
 import RestaurantCard from './RestaurantCard';
+import RestaurantMediumCard from './RestaurantMediumCard';
 
 export {
   WelcomeCard,
@@ -12,4 +13,5 @@ export {
   FlagItem,
   CategoryMenuItems,
   RestaurantCard,
+  RestaurantMediumCard,
 };

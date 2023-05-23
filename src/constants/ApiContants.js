@@ -10,7 +10,7 @@ const COUNTRY_FLAG = {
 const STATIC_IMAGE = {
   BASE_URL: `${BACKEND_BASE_URL}/images`,
   TYPE: {POSTER: 'poster', LOGO: 'logo', GALLERY: 'gallery'},
-  SIZE: {SQUARE: 'square', LANDSCAPE: 'landscape', POTRAIT: 'potrait'},
+  SIZE: {SQUARE: 'square', LANDSCAPE: 'landscape', PORTRAIT: 'portrait'},
   QUALITY: {SD: 'sd', HD: 'hd'},
 };
 
