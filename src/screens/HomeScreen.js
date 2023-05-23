@@ -5,6 +5,7 @@ import {
   View,
   ScrollView,
   FlatList,
+  TouchableOpacity,
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {CategoryMenuItems, RestaurantCard, Separator} from '../components';
@@ -14,9 +15,15 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import {RestaurantService} from '../services';
 
+const sortStyle = isActive =>
+  isActive
+    ? styles.sortListItem
+    : {...styles.sortListItem, borderBottomColor: Colors.DEFAULT_WHITE};
+
 const HomeScreen = ({navigation}) => {
   const [activeCategory, setActiveCategory] = useState();
   const [restaurants, setRestaurants] = useState(null);
+  const [activeSortItem, setActiveSortItem] = useState('recent');
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -106,6 +113,38 @@ const HomeScreen = ({navigation}) => {
             ListSeparatorComponent={() => <Separator width={10} />}
             renderItem={({item}) => <RestaurantCard {...item} />}
           />
+        </View>
+        <View style={styles.sortListContainer}>
+          <TouchableOpacity
+            style={sortStyle(activeSortItem === 'recent')}
+            activeOpacity={0.8}
+            onPress={() => setActiveSortItem('recent')}>
+            <Text style={styles.sortListItemText}>Recent</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={sortStyle(activeSortItem === 'favorite')}
+            activeOpacity={0.8}
+            onPress={() => setActiveSortItem('favorite')}>
+            <Text style={styles.sortListItemText}>Favorite</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={sortStyle(activeSortItem === 'rating')}
+            activeOpacity={0.8}
+            onPress={() => setActiveSortItem('rating')}>
+            <Text style={styles.sortListItemText}>Rating</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={sortStyle(activeSortItem === 'popular')}
+            activeOpacity={0.8}
+            onPress={() => setActiveSortItem('popular')}>
+            <Text style={styles.sortListItemText}>Popular</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={sortStyle(activeSortItem === 'trending')}
+            activeOpacity={0.8}
+            onPress={() => setActiveSortItem('trending')}>
+            <Text style={styles.sortListItemText}>Trending</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>
@@ -221,5 +260,27 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 13 * 1.4,
     fontFamily: Fonts.POPPINS_MEDIUM,
+  },
+  sortListContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    backgroundColor: Colors.DEFAULT_WHITE,
+    marginTop: 8,
+    elevation: 1,
+  },
+  sortListItem: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.DEFAULT_YELLOW,
+    height: 40,
+  },
+  sortListItemText: {
+    color: Colors.DEFAULT_BLACK,
+    fontSize: 13,
+    lineHeight: 13 * 1.4,
+    fontFamily: Fonts.POPPINS_SEMI_BOLD,
   },
 });
