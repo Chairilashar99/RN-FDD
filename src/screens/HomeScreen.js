@@ -120,7 +120,14 @@ const HomeScreen = ({navigation}) => {
             ListHeaderComponent={() => <Separator width={20} />}
             ListFooterComponent={() => <Separator width={20} />}
             ListSeparatorComponent={() => <Separator width={10} />}
-            renderItem={({item}) => <RestaurantCard {...item} />}
+            renderItem={({item}) => (
+              <RestaurantCard
+                {...item}
+                navigate={restaurantId =>
+                  navigation.navigate('Restaurant', {restaurantId})
+                }
+              />
+            )}
           />
         </View>
         <View style={styles.sortListContainer}>
