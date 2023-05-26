@@ -12,7 +12,7 @@ import React, {useEffect, useState} from 'react';
 import {RestaurantService, StaticImageService} from '../services';
 import {Display} from '../utils';
 import {ApiConstants, Colors, Fonts, Images} from '../constants';
-import {CategoryListItem, Separator} from '../components';
+import {CategoryListItem, FoodCard, Separator} from '../components';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
@@ -60,6 +60,7 @@ const RestaurantScreen = ({
   },
 }) => {
   const [restaurant, setRestaurant] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   useEffect(() => {
     RestaurantService.getOneRestaurantById(restaurantId).then(response => {
       console.log(response?.data);
@@ -140,8 +141,21 @@ const RestaurantScreen = ({
                 ListHeaderComponent={() => <ListHeader />}
                 ListFooterComponent={() => <ListFooter />}
                 showsHorizontalScrollIndicator={false}
-                renderItem={({item}) => <CategoryListItem name={item} />}
+                renderItem={({item}) => (
+                  <CategoryListItem
+                    name={item}
+                    isActive={item === selectedCategory}
+                    selectCategory={category => setSelectedCategory(category)}
+                  />
+                )}
               />
+            </View>
+            <View style={styles.foodList}>
+              {restaurant?.foods
+                ?.filter(food => food?.category === selectedCategory)
+                ?.map(item => (
+                  <FoodCard key={item?.id} {...item} />
+                ))}
             </View>
           </View>
         </ScrollView>
@@ -247,5 +261,8 @@ const styles = StyleSheet.create({
   },
   categoriesContainer: {
     marginVertical: 20,
+  },
+  foodList: {
+    marginHorizontal: 15,
   },
 });

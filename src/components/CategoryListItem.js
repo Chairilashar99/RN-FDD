@@ -2,10 +2,16 @@ import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {Colors, Fonts} from '../constants';
 
-const CategoryListItem = ({name}) => {
+const CategoryListItem = ({name, isActive, selectCategory}) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.categoryText}>{name}</Text>
+      <Text
+        style={
+          isActive ? styles.activeCategoryText : styles.inActiveCategoryText
+        }
+        onPress={() => selectCategory(name)}>
+        {name}
+      </Text>
     </View>
   );
 };
@@ -19,10 +25,16 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
   },
-  categoryText: {
+  activeCategoryText: {
+    fontSize: 13,
+    lineHeight: 13 * 1.4,
+    fontFamily: Fonts.POPPINS_BOLD,
+    color: Colors.DEFAULT_BLACK,
+  },
+  inActiveCategoryText: {
     fontSize: 13,
     lineHeight: 13 * 1.4,
     fontFamily: Fonts.POPPINS_SEMI_BOLD,
-    color: Colors.DEFAULT_BLACK,
+    color: Colors.INACTIVE_GREY,
   },
 });
