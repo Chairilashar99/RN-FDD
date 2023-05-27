@@ -61,9 +61,12 @@ const RestaurantScreen = ({
 }) => {
   const [restaurant, setRestaurant] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+
   useEffect(() => {
     RestaurantService.getOneRestaurantById(restaurantId).then(response => {
-      console.log(response?.data);
+      setSelectedCategory(response?.data?.categories[0]);
+      // console.log(response?.data);
       setRestaurant(response?.data);
     });
   }, []);
@@ -86,9 +89,10 @@ const RestaurantScreen = ({
             <View style={styles.titleContainer}>
               <Text style={styles.title}>{restaurant?.name}</Text>
               <Ionicons
-                name="bookmark-outline"
+                name={isBookmarked ? 'bookmark' : 'bookmark-outline'}
                 color={Colors.DEFAULT_YELLOW}
                 size={24}
+                onPress={() => setIsBookmarked(!isBookmarked)}
               />
             </View>
             <Text style={styles.tagText}>{restaurant?.tags?.join(' • ')}</Text>
@@ -156,6 +160,7 @@ const RestaurantScreen = ({
                 ?.map(item => (
                   <FoodCard key={item?.id} {...item} />
                 ))}
+              <Separator height={Display.setHeight(2)} />
             </View>
           </View>
         </ScrollView>
