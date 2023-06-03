@@ -1,5 +1,6 @@
 import {AuthenticationService, StorageService} from '../services';
 import UserService from '../services/UserService';
+import CartAction from './CartAction';
 
 const types = {
   SET_IS_APP_LOADING: 'SET_IS_APP_LOADING',
@@ -58,7 +59,7 @@ const appStart = () => {
               type: types.SET_USER_DATA,
               payload: userResponse?.data,
             });
-            // dispatch(CartAction.getCartItems());
+            dispatch(CartAction.getCartItems());
             // dispatch(BookmarkAction.getBookmarks());
             dispatch({
               type: types.SET_IS_APP_LOADING,
