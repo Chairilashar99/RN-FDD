@@ -1,4 +1,5 @@
 import {
+  Image,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -7,14 +8,15 @@ import {
   View,
 } from 'react-native';
 import React from 'react';
-import {Colors, Fonts} from '../constants';
+import {Colors, Fonts, Images} from '../constants';
 import {FoodCard, Separator} from '../components';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import {Display} from '../utils';
 import {useSelector} from 'react-redux';
 
-const CartScreen = () => {
+const CartScreen = ({navigation}) => {
   const cart = useSelector(state => state?.cartState?.cart);
   return (
     <View style={styles.container}>
@@ -25,7 +27,11 @@ const CartScreen = () => {
       />
       <Separator height={StatusBar.currentHeight} />
       <View style={styles.headerContainer}>
-        <Ionicons name="chevron-back-outline" size={30} />
+        <Ionicons
+          name="chevron-back-outline"
+          size={30}
+          onPress={() => navigation.goBack()}
+        />
         <Text style={styles.headerTitle}>My Cart</Text>
       </View>
       {cart?.cartItems?.length > 0 ? (
@@ -81,9 +87,7 @@ const CartScreen = () => {
                   color={Colors.DEFAULT_WHITE}
                   size={20}
                 />
-                <Text style={styles.checkoutText}>
-                  Checkout ({cart?.cartItems?.length} Items)
-                </Text>
+                <Text style={styles.checkoutText}>Checkout</Text>
               </View>
               <Text style={styles.checkoutText}>
                 IDR {cart?.metaData?.grandTotal?.toFixed(2)}
@@ -93,7 +97,22 @@ const CartScreen = () => {
           </ScrollView>
         </>
       ) : (
-        <View></View>
+        <View style={styles.emptyCartContainer}>
+          <Image
+            style={styles.emptyCartImage}
+            source={Images.EMPTY_CART}
+            resizeMode="contain"
+          />
+          <Text style={styles.emptyCartText}>Cart Empty</Text>
+          <Text style={styles.emptyCartSubText}>
+            Go ahead and order some tasty food
+          </Text>
+          <TouchableOpacity style={styles.addButtonEmpty}>
+            <AntDesign name="plus" color={Colors.DEFAULT_WHITE} size={20} />
+            <Text style={styles.addButtonEmptyText}>Add Food</Text>
+          </TouchableOpacity>
+          <Separator height={Display.setHeight(15)} />
+        </View>
       )}
     </View>
   );
@@ -190,5 +209,51 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     height: Display.setHeight(7),
     marginTop: 10,
+  },
+  checkoutText: {
+    fontSize: 16,
+    fontFamily: Fonts.POPPINS_MEDIUM,
+    lineHeight: 16 * 1.4,
+    color: Colors.DEFAULT_WHITE,
+    marginLeft: 8,
+  },
+  emptyCartContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyCartText: {
+    fontSize: 30,
+    fontFamily: Fonts.POPPINS_LIGHT,
+    lineHeight: 30 * 1.4,
+    color: Colors.DEFAULT_GREEN,
+  },
+  emptyCartSubText: {
+    fontSize: 12,
+    fontFamily: Fonts.POPPINS_MEDIUM,
+    lineHeight: 12 * 1.4,
+    color: Colors.INACTIVE_GREY,
+  },
+  addButtonEmpty: {
+    flexDirection: 'row',
+    backgroundColor: Colors.DEFAULT_YELLOW,
+    borderRadius: 8,
+    paddingHorizontal: Display.setWidth(4),
+    paddingVertical: 5,
+    marginTop: 10,
+    justifyContent: 'space-evenly',
+    elevation: 3,
+    alignItems: 'center',
+  },
+  addButtonEmptyText: {
+    fontSize: 12,
+    fontFamily: Fonts.POPPINS_MEDIUM,
+    lineHeight: 12 * 1.4,
+    color: Colors.DEFAULT_WHITE,
+    marginLeft: 10,
+  },
+  emptyCartImage: {
+    height: Display.setWidth(60),
+    width: Display.setWidth(60),
   },
 });
