@@ -1,10 +1,107 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  StatusBar,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {FoodService, StaticImageService} from '../services';
+import ApiContants from '../constants/ApiContants';
+import {Display} from '../utils';
+import {Separator} from '../components';
+import {Colors, Fonts, Images} from '../constants';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-const FoodScreen = () => {
+const setStyle = isActive =>
+  isActive
+    ? styles.subMenuButtonText
+    : {...styles.subMenuButtonText, color: Colors.DEFAULT_GREY};
+
+const FoodScreen = ({
+  navigation,
+  route: {
+    params: {foodId},
+  },
+}) => {
+  const [food, setFood] = useState(null);
+  const [selectedSubMenu, setSelectedSubMenu] = useState('Details');
+
+  useEffect(() => {
+    FoodService.getOneFoodById(foodId).then(response => {
+      console.log(response?.data);
+      setFood(response?.data);
+    });
+  }, []);
+
   return (
     <View style={styles.container}>
-      <Text>FoodScreen</Text>
+      <StatusBar
+        barStyle="dark-content"
+        translucent
+        backgroundColor="transparent"
+      />
+      <Image
+        style={styles.image}
+        source={{
+          uri: StaticImageService.getGalleryImage(
+            food?.image,
+            ApiContants.STATIC_IMAGE.SIZE.SQUARE,
+          ),
+        }}
+      />
+      <ScrollView>
+        <Separator height={Display.setWidth(100)} />
+        <View style={styles.mainContainer}>
+          <View style={styles.titleHeaderContainer}>
+            <Text style={styles.titleText}>{food?.name}</Text>
+            <Text style={styles.priceText}>IDR {food?.price}</Text>
+          </View>
+          <View style={styles.subHeaderContainer}>
+            <View style={styles.rowAndCenter}>
+              <FontAwesome
+                name="star"
+                size={20}
+                color={Colors.DEFAULT_YELLOW}
+              />
+              <Text style={styles.ratingText}>4.2</Text>
+              <Text style={styles.reviewsText}>(255)</Text>
+            </View>
+            <View style={styles.rowAndCenter}>
+              <Image style={styles.iconImage} source={Images.DELIVERY_TIME} />
+              <Text style={styles.deliveryText}>20 min</Text>
+            </View>
+            <View style={styles.rowAndCenter}>
+              <Image style={styles.iconImage} source={Images.DELIVERY_CHARGE} />
+              <Text style={styles.deliveryText}>Free Delivery</Text>
+            </View>
+          </View>
+          <View style={styles.subMenuContainer}>
+            <TouchableOpacity
+              style={styles.subMenuButtonContainer}
+              onPress={() => setSelectedSubMenu('Details')}>
+              <Text style={setStyle(selectedSubMenu === 'Details')}>
+                Details
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.subMenuButtonContainer}
+              onPress={() => setSelectedSubMenu('Reviews')}>
+              <Text style={setStyle(selectedSubMenu === 'Reviews')}>
+                Reviews
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.detailsContainer}>
+            <Text style={styles.detailHeader}>Description</Text>
+            <Text style={styles.detailContent}>{food?.description}</Text>
+            <Text style={styles.detailHeader}>Ingredients</Text>
+            <Text style={styles.detailContent}>{food?.ingredients}</Text>
+          </View>
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -14,7 +111,111 @@ export default FoodScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: Colors.DEFAULT_WHITE,
+  },
+  image: {
+    position: 'absolute',
+    height: Display.setWidth(100),
+    width: Display.setWidth(100),
+    top: 0,
+  },
+  mainContainer: {
+    backgroundColor: Colors.DEFAULT_WHITE,
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+  },
+  titleHeaderContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    marginHorizontal: 20,
+    marginTop: 10,
+  },
+  titleText: {
+    fontSize: 23,
+    lineHeight: 23 * 1.4,
+    fontFamily: Fonts.POPPINS_SEMI_BOLD,
+    color: Colors.DEFAULT_BLACK,
+  },
+  priceText: {
+    fontSize: 23,
+    lineHeight: 23 * 1.4,
+    fontFamily: Fonts.POPPINS_SEMI_BOLD,
+    color: Colors.DEFAULT_YELLOW,
+  },
+  subHeaderContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginHorizontal: 20,
+    marginTop: 15,
+  },
+  rowAndCenter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  ratingText: {
+    fontSize: 13,
+    lineHeight: 13 * 1.4,
+    fontFamily: Fonts.POPPINS_BOLD,
+    color: Colors.DEFAULT_BLACK,
+    marginLeft: 5,
+  },
+  reviewsText: {
+    fontSize: 13,
+    lineHeight: 13 * 1.4,
+    fontFamily: Fonts.POPPINS_MEDIUM,
+    color: Colors.DEFAULT_BLACK,
+    marginLeft: 5,
+  },
+  iconImage: {
+    height: 20,
+    width: 20,
+  },
+  deliveryText: {
+    fontSize: 12,
+    lineHeight: 12 * 1.4,
+    fontFamily: Fonts.POPPINS_MEDIUM,
+    color: Colors.DEFAULT_BLACK,
+    marginLeft: 3,
+  },
+  subMenuContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderTopWidth: 0.5,
+    borderBottomWidth: 0.5,
+    paddingHorizontal: 20,
+    marginTop: 20,
+    borderColor: Colors.DEFAULT_GREY,
+    justifyContent: 'space-evenly',
+  },
+  subMenuButtonContainer: {
+    paddingVertical: 15,
+    width: Display.setWidth(30),
+    alignItems: 'center',
+  },
+  subMenuButtonText: {
+    fontSize: 13,
+    lineHeight: 13 * 1.4,
+    fontFamily: Fonts.POPPINS_SEMI_BOLD,
+    color: Colors.DEFAULT_BLACK,
+  },
+  detailsContainer: {
+    paddingHorizontal: 20,
+  },
+  detailHeader: {
+    fontSize: 15,
+    lineHeight: 15 * 1.4,
+    fontFamily: Fonts.POPPINS_SEMI_BOLD,
+    color: Colors.DEFAULT_BLACK,
+    marginTop: 10,
+    marginBottom: 2,
+  },
+  detailContent: {
+    fontSize: 12,
+    lineHeight: 12 * 1.4,
+    fontFamily: Fonts.POPPINS_SEMI_BOLD,
+    color: Colors.INACTIVE_GREY,
+    textAlign: 'justify',
   },
 });
