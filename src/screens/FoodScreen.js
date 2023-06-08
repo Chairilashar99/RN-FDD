@@ -14,6 +14,9 @@ import {Display} from '../utils';
 import {Separator} from '../components';
 import {Colors, Fonts, Images} from '../constants';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import {useDispatch, useSelector} from 'react-redux';
+import {CartAction} from '../actions';
 
 const setStyle = isActive =>
   isActive
@@ -29,12 +32,23 @@ const FoodScreen = ({
   const [food, setFood] = useState(null);
   const [selectedSubMenu, setSelectedSubMenu] = useState('Details');
 
+  const dispatch = useDispatch();
+  const itemCount = useSelector(
+    state =>
+      state?.cartState?.cart?.cartItems?.find(item => item?.foodId === foodId)
+        ?.count,
+  );
+
   useEffect(() => {
     FoodService.getOneFoodById(foodId).then(response => {
       console.log(response?.data);
       setFood(response?.data);
     });
   }, []);
+
+  const addToCart = foodId => dispatch(CartAction.addToCart({foodId}));
+  const removeFromCart = foodId =>
+    dispatch(CartAction.removeFromCart({foodId}));
 
   return (
     <View style={styles.container}>
@@ -95,13 +109,44 @@ const FoodScreen = ({
             </TouchableOpacity>
           </View>
           <View style={styles.detailsContainer}>
-            <Text style={styles.detailHeader}>Description</Text>
-            <Text style={styles.detailContent}>{food?.description}</Text>
-            <Text style={styles.detailHeader}>Ingredients</Text>
-            <Text style={styles.detailContent}>{food?.ingredients}</Text>
+            {food?.description ? (
+              <>
+                <Text style={styles.detailHeader}>Description</Text>
+                <Text style={styles.detailContent}>{food?.description}</Text>
+              </>
+            ) : null}
+            {food?.ingredients ? (
+              <>
+                <Text style={styles.detailHeader}>Ingredients</Text>
+                <Text style={styles.detailContent}>{food?.ingredients}</Text>
+              </>
+            ) : null}
           </View>
         </View>
       </ScrollView>
+      <View style={styles.buttonContainer}>
+        <View style={styles.itemAddContainer}>
+          <AntDesign
+            name="minus"
+            color={Colors.DEFAULT_YELLOW}
+            size={18}
+            onPress={() => removeFromCart(foodId)}
+          />
+          <Text style={styles.itemCountText}>{itemCount ? itemCount : 0}</Text>
+          <AntDesign
+            name="plus"
+            color={Colors.DEFAULT_YELLOW}
+            size={18}
+            onPress={() => addToCart(foodId)}
+          />
+        </View>
+        <TouchableOpacity
+          style={styles.cartButton}
+          onPress={() => navigation.navigate('Cart')}
+          activeOpacity={0.8}>
+          <Text style={styles.cartButtonText}>Go to Cart</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -217,5 +262,45 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.POPPINS_SEMI_BOLD,
     color: Colors.INACTIVE_GREY,
     textAlign: 'justify',
+  },
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 0,
+    flexDirection: 'row',
+    paddingHorizontal: Display.setWidth(5),
+    justifyContent: 'space-between',
+    backgroundColor: Colors.DEFAULT_WHITE,
+    width: Display.setWidth(100),
+    paddingVertical: Display.setWidth(2.5),
+  },
+  itemAddContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.LIGHT_GREY2,
+    height: Display.setHeight(6),
+    width: Display.setWidth(30),
+    justifyContent: 'center',
+    borderRadius: 8,
+  },
+  itemCountText: {
+    color: Colors.DEFAULT_BLACK,
+    fontSize: 14,
+    lineHeight: 14 * 1.4,
+    fontFamily: Fonts.POPPINS_SEMI_BOLD,
+    marginHorizontal: 8,
+  },
+  cartButton: {
+    backgroundColor: Colors.DEFAULT_GREEN,
+    height: Display.setHeight(6),
+    width: Display.setWidth(58),
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+  },
+  cartButtonText: {
+    color: Colors.DEFAULT_WHITE,
+    fontSize: 14,
+    lineHeight: 14 * 1.4,
+    fontFamily: Fonts.POPPINS_MEDIUM,
   },
 });
