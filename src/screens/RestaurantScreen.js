@@ -11,12 +11,13 @@ import {
 import React, {useEffect, useState} from 'react';
 import {RestaurantService, StaticImageService} from '../services';
 import {Display} from '../utils';
-import {ApiConstants, Colors, Fonts, Images} from '../constants';
+import {Colors, Fonts, Images} from '../constants';
 import {CategoryListItem, FoodCard, Separator} from '../components';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {useDispatch, useSelector} from 'react-redux';
 import {BookmarkAction} from '../actions';
+import ApiContants from '../constants/ApiContants';
 
 const ListHeader = () => (
   <View
@@ -94,7 +95,7 @@ const RestaurantScreen = ({
           source={{
             uri: StaticImageService.getGalleryImage(
               restaurant?.images?.cover,
-              ApiConstants.STATIC_IMAGE.SIZE.SQUARE,
+              ApiContants.STATIC_IMAGE.SIZE.SQUARE,
             ),
           }}
           style={styles.backgroundImage}

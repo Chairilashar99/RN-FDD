@@ -43,7 +43,7 @@ const CartScreen = ({navigation}) => {
                   {...item?.food}
                   key={item?.food?.id}
                   navigate={() =>
-                    navigation.navigate('Food', {foodId: item?.id})
+                    navigation.navigate('Food', {foodId: item?.food?.id})
                   }
                 />
               ))}

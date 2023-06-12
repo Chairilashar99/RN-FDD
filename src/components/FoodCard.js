@@ -1,12 +1,13 @@
 import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
 import React, {useState} from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {ApiConstants, Colors, Fonts} from '../constants';
+import {Colors, Fonts} from '../constants';
 import {StaticImageService} from '../services';
 import {Display} from '../utils';
 import {useDispatch} from 'react-redux';
 import {useSelector} from 'react-redux';
 import {CartAction} from '../actions';
+import ApiContants from '../constants/ApiContants';
 
 const FoodCard = ({id, name, description, price, image, navigate}) => {
   const dispatch = useDispatch();
@@ -27,7 +28,7 @@ const FoodCard = ({id, name, description, price, image, navigate}) => {
           source={{
             uri: StaticImageService.getGalleryImage(
               image,
-              ApiConstants.STATIC_IMAGE.SIZE.SQUARE,
+              ApiContants.STATIC_IMAGE.SIZE.SQUARE,
             ),
           }}
         />
